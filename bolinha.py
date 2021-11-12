@@ -11,7 +11,7 @@ import PPlay
 from PPlay.sprite import *
 from PPlay.window import *
 
-def coord_convert( cart , scree_dim, R = 25 ):
+def coord_convert( cart , screen_dim, R = 25 ):
 
     '''
     converte as coordenadas do sistema cartesiano ( Centro da tela = ( 0 , 0 ) )
@@ -32,7 +32,7 @@ class Bolinha( Sprite ):
 
     def __init__( self , image_file, center = ( 0 , 0 ) , **kwargs ):
 
-        super().__init__( "assets/imagens/" + image_file )
+        super().__init__( "assets/images/" + image_file )
         
         #--------------------------------------------------
         # posição, em metros da bolinha. A fisica vai considerar
@@ -42,6 +42,9 @@ class Bolinha( Sprite ):
         x , y = center
         self.fx = x
         self.fy = y
+
+        # para a colisão
+        self.old = None
 
         # metros por segundo
         self.vx = kwargs.get( "vx" , 10 )
@@ -54,12 +57,16 @@ class Bolinha( Sprite ):
 
         cart = ( self.fx , self.fy )
         x , y = coord_convert( cart , screen_dim )
-        self.set_postion( x , y )
+        # self.set_postion( x , y )
+        self.x = x
+        self.y = y
     
     def move( self, dt, g = 9.81 ):
+        
+        self.old = ( self.fx , self.fy )
 
-        self.fy += self.vy*dt )
-        self.fx += self.vx*dt )
+        self.fy += self.vy*dt 
+        self.fx += self.vx*dt 
  
         self.vy = self.vy - g*dt
     
@@ -69,7 +76,11 @@ class Bolinha( Sprite ):
         versão mais simplificada. Paredes sempre retas
         '''
 
-        k = numpy.clip( k, 0. , 1. )
+        ox , oy = self.old
+        self.fx = ox
+        self.fy = oy
+
+        k = numpy.clip( k, 0 , 1. )
         if vertical: 
             self.vy *= -k
             return
@@ -112,4 +123,31 @@ class Bolinha( Sprite ):
 
 def test_1():
 
+    width , height = 800 , 800
+    w = Window( width , height )
+    w.set_title( 'bolinha' )
+
+    b = Bolinha( 'basquete.png' , vx = -10 , vy = -25)
     
+    w.delta_time()
+    while True:
+        w.set_background_color( ( 255 , 255 , 255 ) )
+        b.draw()
+
+        dt = w.delta_time()
+        b.move( dt )
+        b.set_screen_pos( width , height )
+
+        #--------------------------------------------------
+        # checando colisões. Só temos paredes, então sem os
+        # métodos da classe Colided, por enquanto
+        print( b.fx , b.x )
+        if b.x + b.width > 600 or b.x < 0:
+            b.simple_bounce( )
+        elif b.y < 0 or b.y + b.height > 800:
+            b.simple_bounce( vertical = True )
+
+        w.update()
+        
+if __name__ == "__main__":
+    test_1()
