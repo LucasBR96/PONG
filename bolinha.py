@@ -3,6 +3,7 @@ import math
 import sys
 import time
 import argparse
+import itertools
 
 # biblioteca de terceiros
 import numpy
@@ -10,6 +11,56 @@ import pygame
 import PPlay
 from PPlay.sprite import *
 from PPlay.window import *
+
+def space_partition( bolas ):
+    
+    bolas.sort( lambda bola : bola.fx )
+    
+    ball_seqs = []
+    current_seq = None
+    for bola in bolas:
+
+        if current_seq is None:
+            current_seq = [ bola ]
+            continue
+        
+        anterior = current_seq[ -1 ]
+        if anterior.collided( bola ):
+            current_seq.append( bola )
+            continue
+
+        ball_seqs.append( current_seq )
+    return ball_seqs
+
+def check_collisions( ball_seqs ):
+
+    col_cand = set()
+    for seq in ball_seqs:
+        for b1 , b2 in itertools.combinations( seq , 2 ):
+            if b1.collided_perfect( b2 ):
+                # b1.reset_position()
+                # b2.reset_position()
+                col_cand.add( ( b1 , b2 ) )
+    return col_cand
+
+
+def handle_collision( b1 , b2, k = 1 ):
+
+    x1 = numpy.array( [ b1.fx , b1.fy ] )
+    v1 = numpy.array( [ b1.vx , b1.vy ] )
+
+    x2 = numpy.array( [ b2.fx , b2.fy ] )
+    v2 = numpy.array( [ b2.vx , b2.vy ] )
+
+    mass_ratio = 2*( b2.mass )/( b1.mass + b2.mass )
+
+    dx = x1 - x2 
+    dv = v1 - v2 
+
+    v1 = v1 - dx*mass_ratio*( numpy.dot( dx , dv )/( dx**2 ).sum() )
+    b1.vx = v1[0]*k
+    b1.vy = v1[1]
+    b1.reset_position()
 
 def coord_convert( cart , screen_dim, R = 25 ):
 
@@ -70,15 +121,19 @@ class Bolinha( Sprite ):
  
         self.vy = self.vy - g*dt
     
+    def reset_position( self ):
+
+        ox , oy = self.old
+        self.fx = ox
+        self.fy = oy
+
     def simple_bounce( self, k = .8 , vertical = False ):
 
         '''
         versão mais simplificada. Paredes sempre retas
         '''
 
-        ox , oy = self.old
-        self.fx = ox
-        self.fy = oy
+        self.reset_position()
 
         k = numpy.clip( k, 0 , 1. )
         if vertical: 
