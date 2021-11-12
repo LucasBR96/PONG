@@ -10,26 +10,44 @@ import pygame
 import PPlay
 from PPlay.sprite import *
 
-class Bolinha( PPlay ):
+def coord_convert( cart , scree_dim, R = 50 ):
 
-    def __init__( self , image_file, center, **kwargs ):
+    # R é a razão entre numero de pixels e um metro
+    
+
+
+class Bolinha( Sprite ):
+
+    def __init__( self , image_file, center = ( 0 , 0 ) , **kwargs ):
 
         super().__init__( "assets/imagens/" + image_file )
         
-        x , y = center/2
-        self.set_position( x , y )
-        
+        #--------------------------------------------------
+        # posição, em metros da bolinha. A fisica vai considerar
+        # a bolinha num plano cartesiano clássico. Sua posição vai ser
+        # convertida para o sistema de coordenadas do PPlay quando a 
+        # bola for renderizada
+        x , y = center
+        self.fx = x
+        self.fy = y
+
         # metros por segundo
         self.vx = kwargs.get( "vx" , 10 )
         self.vy = kwargs.get( "vy" , 0 )
          
         # quilogramas
-        self.mass  = kwargs.get( "mass" , 1 ) 
+        self.mass  = kwargs.get( "mass" , 1 )
+
+    def set_screen_pos( self, screen_dim ):
+
+        cart = ( self.fx , self.fy )
+        x , y = coord_convert( cart , screen_dim )
+        self.set_postion( x , y )
     
     def move( self, dt, g = 9.81 ):
 
-        self.move_y( self.vy*dt )
-        self.move_x( self.vx*dt )
+        self.fy += self.vy*dt )
+        self.fx += self.vx*dt )
  
         self.vy = self.vy - g*dt
     
@@ -61,7 +79,7 @@ class Bolinha( PPlay ):
         #--------------------------------------------------
         # a massa do objeto que colide. Para fins práticos o chão e 
         # teto tem massa infinita
-        mass = kwargs.get( 'mass' , sys.maxint )
+        mass = kwargs.get( 'mass' , sys.maxsize )
 
         #--------------------------------------------------
         # o angulo que o vetor normal a superfície faz com o eixo
