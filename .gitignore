@@ -1,0 +1,8 @@
+# imagens
+*.jpg
+*.jpeg
+*.png
+*.svg
+
+#folders
+PPlay/
