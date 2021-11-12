@@ -9,12 +9,24 @@ import numpy
 import pygame
 import PPlay
 from PPlay.sprite import *
+from PPlay.window import *
 
-def coord_convert( cart , scree_dim, R = 50 ):
+def coord_convert( cart , scree_dim, R = 25 ):
+
+    '''
+    converte as coordenadas do sistema cartesiano ( Centro da tela = ( 0 , 0 ) )
+    para o sistema do PPlay
+    '''
 
     # R é a razão entre numero de pixels e um metro
     
+    dx = int( R*cart[ 0 ] )
+    sx = screen_dim[ 0 ]//2 + dx
 
+    dy = int( R*cart[ 1 ] )
+    sy = screen_dim[ 1 ]//2 - dy
+    
+    return sx , sy
 
 class Bolinha( Sprite ):
 
@@ -97,3 +109,7 @@ class Bolinha( Sprite ):
         # para calcular a dissipação de energia. 
         k = kwargs.get( 'k' , .8 )
 
+
+def test_1():
+
+    
