@@ -13,56 +13,9 @@ import PPlay
 from PPlay.sprite import *
 from PPlay.window import *
 
-def space_partition( bolas ):
-    
-    bolas.sort( key = lambda bola : bola.fx )
-    
-    ball_seqs = []
-    current_seq = None
-    for bola in bolas:
+# utilidades
+from utils import colisao_bw
 
-        if current_seq is None:
-            current_seq = [ bola ]
-            continue
-        
-        anterior = current_seq[ -1 ]
-        if anterior.collided( bola ):
-            current_seq.append( bola )
-            continue
-
-        ball_seqs.append( current_seq )
-    return ball_seqs
-
-def check_collisions( ball_seqs ):
-
-    col_cand = set()
-    for seq in ball_seqs:
-        for b1 , b2 in itertools.combinations( seq , 2 ):
-            if b1.collided_perfect( b2 ):
-                if b1 in col_cand or b2 in col_cand:
-                    continue
-                yield b1 , b2
-                col_cand |= { b1 , b2 }
-    return col_cand
-
-
-def handle_collision( b1 , b2, k = 1 ):
-
-    x1 = numpy.array( [ b1.fx , b1.fy ] )
-    v1 = numpy.array( [ b1.vx , b1.vy ] )
-
-    x2 = numpy.array( [ b2.fx , b2.fy ] )
-    v2 = numpy.array( [ b2.vx , b2.vy ] )
-
-    mass_ratio = 2*( b2.mass )/( b1.mass + b2.mass )
-
-    dx = x1 - x2 
-    dv = v1 - v2 
-
-    v1 = v1 - dx*mass_ratio*( numpy.dot( dx , dv )/( dx**2 ).sum() )
-    b1.vx = v1[0]*k
-    b1.vy = v1[1]
-    b1.reset_position()
 
 def coord_convert( cart , screen_dim, R = 25 ):
 
@@ -129,20 +82,18 @@ class Bolinha( Sprite ):
         self.fx = ox
         self.fy = oy
 
-    def simple_bounce( self, k = .8 , vertical = False ):
+    def impulso( self , ix , iy ):
 
         '''
-        versão mais simplificada. Paredes sempre retas
+        o impulso é a variação da quantidade de movimento
         '''
 
-        self.reset_position()
+        m = self.mass
+        vx = self.vx
+        vy = self.vy
 
-        k = numpy.clip( k, 0 , 1. )
-        if vertical: 
-            self.vy *= -k
-            return
-        self.vx *= -k
-
+        self.vx = ( ix + vx*m )/m
+        self.vy = ( iy + vy*m )/m
 
     def bounce( self , **kwargs ):
         
@@ -165,7 +116,7 @@ class Bolinha( Sprite ):
         # o angulo que o vetor normal a superfície faz com o eixo
         # x. Relevante pois planejo fazer a barra dos jogadores
         # inclinável.
-        norm = kwargs.get( 'norm' , numpy.pi/2 )
+        norm = kwargs.get( 'norm' , numpy.array( [ 0 , 1 ] ) )
 
         # velocidade da superfície, caso se mova.
         ux = kwargs.get( 'ux' , 0 )
@@ -177,6 +128,8 @@ class Bolinha( Sprite ):
         # para calcular a dissipação de energia. 
         k = kwargs.get( 'k' , .8 )
 
+        
+        #projetando 
 
 def test_1():
 
@@ -199,55 +152,17 @@ def test_1():
         # checando colisões. Só temos paredes, então sem os
         # métodos da classe Colided, por enquanto
         print( b.fx , b.x )
-        if b.x + b.width > width or b.x < 0:
-            b.simple_bounce( )
-        elif b.y < 0 or b.y + b.height > height:
-            b.simple_bounce( vertical = True )
-
-        w.update()
-
-
-def test_2():
-
-    width , height, R = 800 , 800, 25
-    w = Window( width , height )
-    w.set_title( 'bolinha' )
-
-    seq = []
-    num_bolas = 15
-    for i in range( num_bolas ):
-
-        vx , vy = -10 + 20*numpy.random.rand(2)
-        x = numpy.random.randint( low = -width//( 2*R ) , high = width//( 2*R ) )
-        y = numpy.random.randint( low = -height//( 2*R ) , high = height//( 2*R ) )
-        b = Bolinha( 'basquete.png' , vx = vx , vy = vy , center = ( x , y ) )
-        seq.append( b )
-    
-    w.delta_time()
-    while True:
-        w.set_background_color( ( 255 , 255 , 255 ) )
-
-        dt = w.delta_time()
-        for b in seq:
-
-            b.move( dt )
-            b.draw()
-            b.set_screen_pos( ( width , height ) )
-
-            if b.x + b.width > width or b.x < 0:
-                b.simple_bounce( k = 1 )
-            elif b.y < 0 or b.y + b.height > height:
-                b.simple_bounce( k = 1 , vertical = True )
-
-        ball_seqs = space_partition( seq )
-        pos_col   = check_collisions( ball_seqs )
-        for b1 , b2 in pos_col:
-            handle_collision( b1 , b2 )
-            handle_collision( b2 , b1 )   
-
-        w.update()
+        ix , iy = colisao_bw( b , ( width , height ) )
+        if not( ix == 0 and ix == iy ):
+            b.impulso( ix , iy )
+            b.reset_position()
         
+        w.update()
+
+
+
+
         
 if __name__ == "__main__":
-    # test_1()
-    test_2()
+    test_1()
+
