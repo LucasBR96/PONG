@@ -6,3 +6,7 @@
 
 #folders
 PPlay/
+
+#metadados
+*.pyc
+.gitignore

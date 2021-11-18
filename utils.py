@@ -68,3 +68,18 @@ def colisao_bw( bola , dims, k = .9 ):
         iy = -2*vy*m
 
     return k*ix , k*iy
+
+def set_impulse( b1 , b2 ):
+    pass
+
+def colisão_bb( b1 , b2 ):
+
+    '''
+    colisão de bola com bola
+    '''
+
+    x1 , y1 , x2 , y2 = 0 , 0 , 0 , 0
+    if b1.collided_perfect( b2 ):
+        x1 , y1 = set_impulse( b1 , b2 )
+        x2 , y2 = set_impulse( b2 , b1 )
+    return x1 , y1 , x2 , y2

@@ -53,7 +53,7 @@ class Bolinha( Sprite ):
         self.old = None
 
         # metros por segundo
-        self.vx = kwargs.get( "vx" , 10 )
+        self.vx = kwargs.get( "vx" , 15 )
         self.vy = kwargs.get( "vy" , 0 )
          
         # quilogramas
@@ -95,41 +95,6 @@ class Bolinha( Sprite ):
         self.vx = ( ix + vx*m )/m
         self.vy = ( iy + vy*m )/m
 
-    def bounce( self , **kwargs ):
-        
-        '''
-        alteração do movimento da bola quando quando bate
-        na superficie. No caso geral a barra, teto ou chão.
-        Essa função tem como efeito colateral a mudança 
-        nos valores de vx e vy da bola, e retorna a quantida
-        de de energia dissipada na colisão, para computar o
-        quão alto será o som do impacto. Quando nenhum argumento
-        for passado. Considera-se o chão a superfície.
-        '''
-
-        #--------------------------------------------------
-        # a massa do objeto que colide. Para fins práticos o chão e 
-        # teto tem massa infinita
-        mass = kwargs.get( 'mass' , sys.maxsize )
-
-        #--------------------------------------------------
-        # o angulo que o vetor normal a superfície faz com o eixo
-        # x. Relevante pois planejo fazer a barra dos jogadores
-        # inclinável.
-        norm = kwargs.get( 'norm' , numpy.array( [ 0 , 1 ] ) )
-
-        # velocidade da superfície, caso se mova.
-        ux = kwargs.get( 'ux' , 0 )
-        uy = kwargs.get( 'uy' , 0 )
-        
-        #--------------------------------------------------
-        # coeficiente de restituição. Varia de 0 ( Colisão perfeita
-        # mente inelástica ) a 1. ( perfeitamente elástica ). É usada
-        # para calcular a dissipação de energia. 
-        k = kwargs.get( 'k' , .8 )
-
-        
-        #projetando 
 
 def test_1():
 
@@ -137,7 +102,7 @@ def test_1():
     w = Window( width , height )
     w.set_title( 'bolinha' )
 
-    b = Bolinha( 'basquete.png' , vx = -15 , vy = -25)
+    b = Bolinha( 'basquete.png' )
     
     w.delta_time()
     while True:
