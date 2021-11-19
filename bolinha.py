@@ -1,10 +1,3 @@
-# biblioteca padrão
-import math
-import sys
-import time
-import argparse
-import itertools
-import random
 
 # biblioteca de terceiros
 import numpy
@@ -70,10 +63,8 @@ class bolinha_spr( Sprite ):
     def convert_pos( self ):
 
         x , y = self.bola.pos
-        true_x , true_y = self.conv.v2r( x , y )
+        true_x , true_y = self.conv.to_virtual( x , y )
         self.x = true_x
         self.y = true_y
         
-if __name__ == "__main__":
-    test_1()
 

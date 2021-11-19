@@ -4,89 +4,70 @@ import time
 
 import numpy
 
+from constantes import * 
+
 class coord_conv:
+
+    def __init__(
+        self , center = numpy.array( ( 0 , SCREEN_DIM[ 1 ] ) ),
+        mat = numpy.array([ [ R , 0 ] , [ 0 , -R ] ])
+    ):
+
+        self.center = center
+        self.mat = mat
+    
+    def from_virtual( self , x , y ):
+        return numpy.array( [ x , y ] )@self.mat + self.center 
+    
+    def to_virtual( self , x , y ):
+
+        '''
+        não vou escrever nada ainda, pois não tenho nenhuma utilidade
+        para essa função por enquanto
+        '''
+        pass
+
+
+class clock:
 
     def __init__( self ):
         pass
 
+def check_bw( bola_sprite , screen = SCREEN_DIM ):
 
-# --------------------------------------------------------
-# Colisões
+    '''
+    Checa se a bola colidiu com alguma parede, retornando
+    uma flag pra ver qual foi atingida. Essa função opera no sistema de coor
+    denada do PPlay.
+    '''
 
-def space_partition( bolas ):
+    width , height = screen
+
+    if bola_sprite.y + bola_sprite.height > height:
+        return FLOOR
     
-    '''
-    particiona os objetos na tela em conjuntos disjuntos cujos
-    elementos talvez colidam. Se dois objetos não estão no mesmo
-    grupo é certo que eles não vão colidir no mesmo frame
-    '''
-
-    bolas.sort( key = lambda bola : bola.fx )
+    if bola_sprite.y < 0:
+        return CEIL
     
-    ball_seqs = []
-    current_seq = None
-    for bola in bolas:
+    if bola_sprite.x + bola_sprite.width > width:
+        return FRONT_WALL
+    
+    if bola_sprite.x < 0:
+        return BACK_WALL
+    
+    return NO_WALL
 
-        if current_seq is None:
-            current_seq = [ bola ]
-            continue
-        
-        anterior = current_seq[ -1 ]
-        if anterior.x + anterior.width < bola.x:
-            current_seq.append( bola )
-            continue
-
-        ball_seqs.append( current_seq )
-    return ball_seqs
-
-def check_collisions( ball_seqs ):
+def handle_bw( bola , col_type , k = K ):
 
     '''
-    Procura colisões perfeitas dentro de cada grupo.
+    Muda a direção da bola de acordo com a colisão obtida. 
     '''
 
-    col_cand = set()
-    for seq in ball_seqs:
-        for b1 , b2 in itertools.combinations( seq , 2 ):
-            if b1.collided_perfect( b2 ):
-                col_cand |= { ( b1 , b2 ) }
-    return col_cand
-
-def colisao_bw( bola , dims, k = .9 ):
-
-    '''
-    tratamento de colisão da bola com alguma das paredes
-    do jogo.
-    '''
-
-    m = bola.mass
-    vx = bola.vx
-    vy = bola.vy
-    ix , iy = 0 , 0 
-
-    a = ( 0 < bola.x )
-    c = ( bola.x + bola.width < dims[ 0 ] )
-    if not( a and c ):
-        ix = -2*vx*m
-
-    b = ( 0 < bola.y )
-    d = ( bola.y + bola.height < dims[ 1 ] )
-    if not( b and d ):
-        iy = -2*vy*m
-
-    return k*ix , k*iy
-
-def set_impulse( b1 , b2 ):
-    pass
-
-def colisão_bb( b1 , b2 ):
-
-    '''
-    colisão de bola com bola
-    '''
-
-    x1 , y1 , x2 , y2 = 0 , 0 , 0 , 0
-    if b1.collided_perfect( b2 ):
-        x1 , y1 = set_impulse( b1 , b2 )
-        x2 , y2 = set_impulse( b2 , b1 )
-    return x1 , y1 , x2 , y2
+    if col_type == NO_WALL:
+        return
+    
+    dv = k*numpy.array( [ -1 , 1 ] )
+    if col_type == FLOOR or col_type == CEIL:
+        dv *= -1
+    
+    bola.speed *= dv 
