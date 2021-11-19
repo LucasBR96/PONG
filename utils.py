@@ -71,3 +71,4 @@ def handle_bw( bola , col_type , k = K ):
         dv *= -1
     
     bola.speed *= dv 
+    bola.reset_pos()

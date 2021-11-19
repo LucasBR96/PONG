@@ -41,13 +41,13 @@ class bolinha:
     
     def move( self , dt , g = G ):
 
-        self.previous_pos
+        self.previous_pos = self.pos.copy()
         self.pos += self.speed*dt
         self.speed[ 1 ] -= g*dt
 
     def reset_pos( self , ponto = False ):
 
-        old = self.base_pos if ponto else self.old_pos
+        old = self.base_pos if ponto else self.previous_pos
         self.pos = old
 
 class bolinha_spr( Sprite ):
@@ -63,8 +63,7 @@ class bolinha_spr( Sprite ):
     def convert_pos( self ):
 
         x , y = self.bola.pos
-        true_x , true_y = self.conv.to_virtual( x , y )
-        self.x = true_x
-        self.y = true_y
+        true_x , true_y = self.conv.from_virtual( x , y )
+        self.set_position( true_x , true_y )
         
 
