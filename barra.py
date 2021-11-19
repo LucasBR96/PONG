@@ -20,9 +20,9 @@ class Pad:
 
     def __init__( self , **kwargs ) -> None:
         
-        self.pos = kwargs.get('pos', numpy.array( [ -50 , 0 ] ) )
+        self.pos = kwargs.get('pos', numpy.array( [ 2 , 3 ] ) )
         self.basepos = self.pos.copy() #depois de ponto marcado, retornar à posição original
-        self.height = kwargs.get( 'height' , 1. )
+        self.height = kwargs.get( 'height' , 1.5 )
         self.speed = numpy.zeros( 2 )
         
         #------------------------------------------------------------
@@ -35,8 +35,16 @@ class Pad:
 
         self.mass = kwargs.get( 'mass' , 1. )
 
+        #------------------------------------------------------------
+        # Se for nescessário retornar à posição original. Por exemplo
+        # em caso de colisão
         self.previous_pos  = None
         self.previous_norm = None
+
+        #-------------------------------------------------------------
+        # Area em que o pad fica restrito
+        #                                         x1  y1  dx  dy
+        self.outerbox = kwargs.get("outerbox" , [ 0 , 0 , 4 , 6] )
 
     def get_edges( self ):
 
