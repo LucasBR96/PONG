@@ -62,13 +62,28 @@ class Pad:
         self.pos = p0.copy()
 
         n0 = self.basenorm if point else self.previous_norm
-        self.norm = n0
+        self.norm = n0.copy()
 
     def move( self , dt ):
 
         self.previous_pos = self.pos.copy()
         self.pos += self.speed*dt
     
+    def out_of_thebox( self ):
+
+        pos1 , pos2 = self.get_edges()
+        x1 = min( pos1[0] ,pos2[ 0 ] )
+        x2 = max( pos1[0] ,pos2[ 0 ] )
+        y1 = min( pos1[1] ,pos2[ 1 ] )
+        y2 = max( pos1[1] ,pos2[ 1 ] )
+
+        x , y , w , h = self.outerbox
+        xmin , xmax , ymin , ymax = x , x + w , y , y + h
+
+        a = ( xmin <= x1 ) and ( x2 <= xmax )
+        b = ( ymin <= y1 ) and ( y2 <= ymax )
+        return not( a and b )
+
     def rotate( self , dt , clockwise = True):
 
         self.previous_norm = self.norm.copy()
@@ -77,7 +92,12 @@ class Pad:
         d_theta = k*self.rot_speed*dt
         dx = numpy.cos( d_theta )
         dy = numpy.sin( d_theta )
-        self.norm += numpy.array( [ dx , dy ] ) 
+        self.norm += numpy.array( [ dx , dy ] )
+
+    def over_tilt( self ): 
+
+        # o pad está inclinado mais do que o máximo permitido
+        return ( self.norm.dot( self.basenorm ) ) > numpy.cos( self.max_theta )
 
         
         
