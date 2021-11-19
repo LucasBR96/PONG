@@ -16,7 +16,7 @@ from PPlay.window import *
 # utilidades
 from utils import *
 
-class Pad:
+class barra:
 
     def __init__( self , **kwargs ) -> None:
         

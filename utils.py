@@ -3,6 +3,13 @@ import sys
 import time
 
 import numpy
+
+class coord_conv:
+
+    def __init__( self ):
+        pass
+
+
 # --------------------------------------------------------
 # Colisões
 
