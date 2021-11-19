@@ -57,7 +57,7 @@ class Bolinha( Sprite ):
         self.vy = kwargs.get( "vy" , 0 )
          
         # quilogramas
-        self.mass  = kwargs.get( "mass" , 1 )
+        self.mass  = kwargs.get( "mass" , .3 )
 
     def set_screen_pos( self, screen_dim , R = 25 ):
 
