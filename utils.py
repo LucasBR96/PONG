@@ -89,4 +89,5 @@ def handle_bp( bola , barra ,col_type , k = K ):
     dv = numpy.array( [ -1 , 1 ] )
     bola.speed *= dv
     bola.reset_pos()
+    barra.reset_vars()
     

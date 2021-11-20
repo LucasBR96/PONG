@@ -29,23 +29,22 @@ class barra:
         #------------------------------------------------------------
         # O pad pode ser rotacionado, e norm é o vetor unitŕaio perpendicular
         # à barra, indicando a inclinação
-        self.norm = kwargs.get( 'norm' , numpy.array( [1. , 0 ] ) )
+        self.norm = kwargs.get( 'norm' , RIGHT_NORM  )
         self.basenorm = self.norm.copy()
-        self.rot_speed = kwargs.get( 'rot_speed' , 1. )
-        self.max_theta = kwargs.get( 'max_theta' , numpy.pi/3 )
+        self.rot_speed = kwargs.get( 'rot_speed' , ROT_SPEED )
+        self.max_theta = kwargs.get( 'max_theta' , MAX_THETA )
 
         self.mass = kwargs.get( 'mass' , 1. )
 
         #------------------------------------------------------------
         # Se for nescessário retornar à posição original. Por exemplo
         # em caso de colisão
-        self.previous_pos  = None
-        self.previous_norm = None
+        self.previous_pos  = self.pos.copy()
+        self.previous_norm = self.norm.copy()
 
         #-------------------------------------------------------------
         # Area em que o pad fica restrito
-        #                                         x1  y1  dx  dy
-        self.outerbox = kwargs.get("outerbox" , [ 0 , 0 , 4 , 6] )
+        self.outerbox = kwargs.get("outerbox" ,  )
 
     def get_edges( self ):
 
