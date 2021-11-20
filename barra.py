@@ -15,14 +15,15 @@ from PPlay.window import *
 
 # utilidades
 from utils import *
+from constantes import *
 
 class barra:
 
     def __init__( self , **kwargs ) -> None:
         
-        self.pos = kwargs.get('pos', numpy.array( [ 2 , 3 ] ) )
+        self.pos = kwargs.get('pos', numpy.array( RIGHT_PAD ) )
         self.basepos = self.pos.copy() #depois de ponto marcado, retornar à posição original
-        self.height = kwargs.get( 'height' , 1.5 )
+        self.height = kwargs.get( 'height' , PAD_TAM )
         self.speed = numpy.zeros( 2 )
         
         #------------------------------------------------------------
@@ -51,8 +52,8 @@ class barra:
         v = self.norm*self.height/2
         rot_mat = numpy.array([ [ 0 , -1. ] , [ 1 , 0 ] ])
         
-        x1 = self.center + v@rot_mat
-        x2 = self.center + v@(-rot_mat )
+        x1 = self.pos + v@( -rot_mat )
+        x2 = self.pos + v@( rot_mat )
 
         return x1 , x2
         
@@ -100,4 +101,19 @@ class barra:
         return ( self.norm.dot( self.basenorm ) ) > numpy.cos( self.max_theta )
 
         
+class barra_spr( Sprite ):
+
+    def __init__( self , **kwargs ):
         
+        image_file = kwargs.get( 'image_file' , PAD_IMG)
+        super().__init__( "assets/images/" + image_file )
+
+        self.barra = barra( **kwargs )
+        self.conv = coord_conv( **kwargs )
+        
+    
+    def convert_pos( self ):
+
+        x1 , _ = self.barra.get_edges()
+        true_x , true_y = self.conv.from_virtual( x1[0] , x1[1] )
+        self.set_position( true_x , true_y )

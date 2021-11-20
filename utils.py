@@ -72,3 +72,21 @@ def handle_bw( bola , col_type , k = K ):
     
     bola.speed *= dv 
     bola.reset_pos()
+
+def check_bp( bola_sprite , pad_sprite ):
+
+    if not bola_sprite.collided( pad_sprite ):
+        return NO_PAD
+    
+    vbola = bola_sprite.bola.speed
+    vpad  = pad_sprite.barra.norm
+    if vbola.dot( vpad ) < 0:
+        return FRONT_PAD
+    return BACK_PAD
+
+def handle_bp( bola , barra ,col_type , k = K ):
+
+    dv = numpy.array( [ -1 , 1 ] )
+    bola.speed *= dv
+    bola.reset_pos()
+    
