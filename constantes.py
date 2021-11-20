@@ -13,14 +13,14 @@ BOLA_MASS  = .3
 # Pad
 PAD_TAM    = 1.5
 PAD_SPEED  = 3.
+ROT_SPEED  = 1.
+MAX_THETA  = numpy.pi/3
 RIGHT_NORM = numpy.array( [1. , 0 ] )
-RIGHT_PAD = numpy.array( [ QUADRA_DIM[0]/4 , QUADRA_DIM[1]/2 ] )
-RIGHT_BOX = [ 0 , 0 , QUADRA_DIM[0]/3 , QUADRA_DIM[1] ]
-LEFT_NORM = numpy.array( [-1. , 0 ] )
-LEFT_PAD = numpy.array( [ 3*QUADRA_DIM[0]/4 , QUADRA_DIM[1]/2 ] )
-LEFT_BOX = [ 2*QUADRA_DIM[0]/3 , 0 , QUADRA_DIM[0]/3 , QUADRA_DIM[1] ]
-ROT_SPEED = 1.
-MAX_THETA = numpy.pi/3
+RIGHT_PAD  = numpy.array( [ QUADRA_DIM[0]/4 , QUADRA_DIM[1]/2 ] )
+RIGHT_BOX  = [ 0 , 0 , QUADRA_DIM[0]/3 , QUADRA_DIM[1] ]
+LEFT_NORM  = numpy.array( [-1. , 0 ] )
+LEFT_PAD   = numpy.array( [ 3*QUADRA_DIM[0]/4 , QUADRA_DIM[1]/2 ] )
+LEFT_BOX   = [ 2*QUADRA_DIM[0]/3 , 0 , QUADRA_DIM[0]/3 , QUADRA_DIM[1] ]
 
 # Física
 G = 9.81   # Acc da Gravidade
@@ -37,12 +37,13 @@ CEIL       = 2
 BACK_WALL  = 3
 FLOOR      = 4
 
-#colisoes com o Pad
+#Colisoes com o Pad
 FRONT_PAD = 1
 BACK_PAD  = -1
 NO_PAD    = 0
 
 #Teclado
-RPAD_KEYS = {'w' , 's' , 'a' , 'd' }
-LPAD_KEYS = {'i' , 'j' , 'k' , 'l' }
-GAME_KEYS = RPAD_KEYS | LPAD_KEYS
+RPAD_KEYS = ['w' , 's' , 'a' , 'd' ]
+LPAD_KEYS = ['i' , 'j' , 'k' , 'l' ]
+PAUSE     = 'space'
+GAME_KEYS = RPAD_KEYS | LPAD_KEYS | { PAUSE }

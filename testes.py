@@ -44,8 +44,8 @@ def teste2():
     b = bolinha_spr()
     b.convert_pos()
 
-    pad = barra_spr()
-    pad.convert_pos()
+    rpad = barra_spr()
+    rpad.convert_pos()
 
     kb = Keyboard()
     foo = lambda x: kb.key_pressed( x )
@@ -59,18 +59,18 @@ def teste2():
         elif foo( 'a' ): v = numpy.array( [ -PAD_SPEED, 0  ] )
         elif foo( 'd' ): v = numpy.array( [ PAD_SPEED , 0 ] )
 
-        pad.barra.speed = v
+        rpad.barra.speed = v
 
     def manage_pad_pos():
 
-        barra = pad.barra
+        barra = rpad.barra
         if barra.out_of_thebox():
             barra.reset_vars()
 
     def manage_ball_hits():
 
         hit1 = check_bw( b , ( W.width , W.height ) )
-        hit2 = check_bp( b , pad )
+        hit2 = check_bp( b , rpad )
         if not( hit1 or hit2 ):
             return
         
@@ -83,25 +83,26 @@ def teste2():
             handle_bw( b.bola , hit1 )
             return
         
-        handle_bp( b.bola , pad.barra , hit2 )
+        handle_bp( b.bola , rpad.barra , hit2 )
     
     while True:
 
         W.update()
         W.set_background_color( ( 255 , 255 , 255 ) )
         b.draw()
-        pad.draw()
+        rpad.draw()
 
-        dt = W.delta_time()        
+        dt = W.delta_time()  
         b.bola.move( dt )
         b.convert_pos()
-        pad.barra.move( dt )
-        pad.convert_pos()
+        rpad.barra.move( dt )
+        rpad.convert_pos()
 
         manage_ball_hits()
         manage_pad_pos()
         manage_keys()
-        
+
+def
 
 if __name__ == "__main__":
 

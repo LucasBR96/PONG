@@ -19,6 +19,18 @@ from constantes import *
 
 class barra:
 
+    @classmethod
+    def right( cls ):
+        return cls()
+    
+    @classmethod
+    def left( cls ):
+        return cls(
+            pos      = LEFT_PAD,
+            norm     = LEFT_NORM,
+            outerbox = LEFT_BOX
+        )
+
     def __init__( self , **kwargs ) -> None:
         
         self.pos = kwargs.get('pos', numpy.array( RIGHT_PAD ) )
@@ -44,7 +56,7 @@ class barra:
 
         #-------------------------------------------------------------
         # Area em que o pad fica restrito
-        self.outerbox = kwargs.get("outerbox" ,  )
+        self.outerbox = kwargs.get("outerbox" , RIGHT_BOX )
 
     def get_edges( self ):
 
@@ -113,6 +125,7 @@ class barra_spr( Sprite ):
     
     def convert_pos( self ):
 
-        x1 , _ = self.barra.get_edges()
-        true_x , true_y = self.conv.from_virtual( x1[0] , x1[1] )
+        x1 , x2 = self.barra.get_edges()
+        x , y = x1 if x1[1] > x2[1] else x2 
+        true_x , true_y = self.conv.from_virtual( x , y )
         self.set_position( true_x , true_y )
