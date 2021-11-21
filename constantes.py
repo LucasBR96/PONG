@@ -11,6 +11,17 @@ BOLA_THETA = numpy.pi/3
 BOLA_START = numpy.array( [ 6. , 3. ] )
 BOLA_MASS  = .3
 
+# Placares
+FONT_SIZE = 28
+PLACAR_Y  = SCREEN_DIM[ 1 ]/2
+PLACAR1_X = SCREEN_DIM[ 0 ]/8
+PLACAR2_X = 7*SCREEN_DIM[ 0 ]/8
+
+# Pausa
+PAUSE_X = ( SCREEN_DIM[0]/2 ) - 3*FONT_SIZE
+PAUSE_Y = ( SCREEN_DIM[1]/2 ) - .5*FONT_SIZE
+PAUSE_T = .05
+
 # Pad
 PAD_TAM    = 1.5
 PAD_SPEED  = 4.
@@ -31,7 +42,10 @@ K = 1.   # Coef de restituição
 BOLA_IMG = 'basquete.png'
 PAD_IMG  = 'Pad.png'
 
-# Paredes
+# descolisao
+BACK_DT = .1
+
+# colisoes com paredes
 NO_WALL    = 0
 FRONT_WALL = 1
 CEIL       = 2

@@ -15,18 +15,14 @@ class coord_conv:
 
         self.center = center
         self.mat = mat
+        self.inv = numpy.linalg.inv( mat )
     
     def from_virtual( self , x , y ):
         return numpy.array( [ x , y ] )@self.mat + self.center 
     
     def to_virtual( self , x , y ):
-
-        '''
-        não vou escrever nada ainda, pois não tenho nenhuma utilidade
-        para essa função por enquanto
-        '''
-        pass
-
+        return ( numpy.array( [ x , y ] ) - self.center )@self.inv
+        
 class clock:
 
     def __init__( self ):
@@ -68,26 +64,27 @@ def check_bw( bola_sprite , screen = SCREEN_DIM ):
     
     return NO_WALL
 
-def handle_bw( bola , col_type , rpad , lpad , k = K ):
+def handle_bw( bola_sprite , bola , col_type ):
 
     '''
-    Muda a direção da bola de acordo com a colisão obtida com uma das paredes.
+    Muda a direção da bola de acordo com a colisão obtida com o teto ou chão
     '''
 
-    if col_type == NO_WALL:
-        return
+    if col_type == CEIL:
+        bola_sprite.y = 0
+    else:
+        bola_sprite.y = SCREEN_DIM[ 1 ] - bola_sprite.height
     
-    if col_type == FLOOR or col_type == CEIL:
-        dv = k*numpy.array( [ 1 , -1 ] )
-        bola.speed *= dv 
-        bola.reset_pos()
-        return
+    bola.speed[ 1 ] *= -1
+    bola_sprite.set_virt_pos()
+    
 
-    
-    pad = rpad if col_type == FRONT_WALL else lpad
-    pad.score += 1 
-    rpad.reset_vars( point = True)
-    lpad.reset_vars( point = True)
+
+def update_score( pad_win , pad_lose , bola ):
+
+    pad_win.score += 1 
+    pad_lose.reset_vars( point = True)
+    pad_lose.reset_vars( point = True)
     bola.reset_pos( point = True )
 
 
@@ -111,5 +108,4 @@ def handle_bp( bola_sprite, barra , k = K ):
         bola_sprite.bola.move( t )
         bola_sprite.convert_pos()
     
-    dv = numpy.array( [ -1 , 1 ] )
-    bola_sprite.bola.speed *= -dv
+    bola_sprite.bola.speed[1] *= -1

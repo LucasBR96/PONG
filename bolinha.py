@@ -51,5 +51,11 @@ class bolinha_spr( Sprite ):
         x , y = self.bola.pos
         true_x , true_y = self.conv.from_virtual( x , y )
         self.set_position( true_x , true_y )
+    
+    def set_virt_pos( self ):
+
+        x , y = self.x , self.y
+        virtual_x , virtual_y = self.conv.to_virtual( x , y )
+        self.bola.pos = numpy.array( [ virtual_x , virtual_y ] )
         
 

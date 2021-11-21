@@ -31,9 +31,11 @@ def main():
     lpad.convert_pos()
     # print( *lpad.barra.pos , lpad.x , lpad.y )
 
-
     kb = Keyboard()
     foo = lambda x: kb.key_pressed( x )
+
+    global paused
+    paused = False
 
     def set_screen():
 
@@ -42,15 +44,33 @@ def main():
         rpad.draw()
         lpad.draw()
 
+        #renderizando placar
+        W.draw_text( str( rpad.barra.score ) , PLACAR1_X , PLACAR_Y , size = FONT_SIZE )
+        W.draw_text( str( lpad.barra.score ) , PLACAR2_X , PLACAR_Y , size = FONT_SIZE )
+
+        #indicando pausa 
+        if paused:
+            W.draw_text( "PAUSADO" , PAUSE_X , PAUSE_Y , size = FONT_SIZE  )
+
     def manage_keys():
         
+        if foo( PAUSE ):
+            global paused
+            paused = not paused
+            # se o frame estiver muito rapido, o jogo vai pausar e despausar enquanto o 
+            # a barra pressionada.
+            time.sleep( PAUSE_T )
+
+        if paused:
+            return
+
         a = any( map( foo , RPAD_KEYS ) )
         b = any( map( foo , LPAD_KEYS ) )
-        c = foo( PAUSE )
-
-        if not ( a or b or c ):
-            rpad.barra.speed = numpy.zeros( 2 )
-            lpad.barra.speed = numpy.zeros( 2 )
+        
+        v = numpy.zeros( 2 )
+        if not ( a or b ):
+            lpad.barra.speed = v.copy()
+            rpad.barra.speed = v.copy()
             return
         
         up , down , left , right = RPAD_KEYS
@@ -58,12 +78,23 @@ def main():
         if b:
             up , down , left , right = LPAD_KEYS
             pad = lpad
-
+        
         if   foo( up    ): v = numpy.array( [ 0 , PAD_SPEED ] )
         elif foo( down  ): v = numpy.array( [ 0 , -PAD_SPEED ] )
-        elif foo( left  ): v = numpy.array( [ -PAD_SPEED, 0  ] )
-        elif foo( right ): v = numpy.array( [ PAD_SPEED , 0 ] )
+        # elif foo( left  ): v = numpy.array( [ -PAD_SPEED, 0  ] )
+        # elif foo( right ): v = numpy.array( [ PAD_SPEED , 0 ] )
         pad.barra.speed = v
+    
+    def move_sprites():
+
+        b.convert_pos()
+        rpad.convert_pos()
+        lpad.convert_pos()
+
+        dt = W.delta_time()
+        b.bola.move( dt )
+        rpad.barra.move( dt )
+        lpad.barra.move( dt )
 
     def manage_pad_pos():
 
@@ -74,22 +105,36 @@ def main():
                 print( barra.pos , pad.x , pad.y , pad.x + pad.width , pad.y + pad.height )
                 barra.reset_vars()
 
-    def manage_ball_hits():
+    def manage_ball_wall():
 
         # print( *b.bola.pos , *b.bola.speed )
-        hit1 = check_bw( b , ( W.width , W.height ) )
-        hit2 = check_bp( b , rpad )
-        hit3 = check_bp( b , lpad )
-
-        if not( hit1 or hit2 or hit3 ):
+        hit = check_bw( b , ( W.width , W.height ) )
+        if not hit:
+            return
+        
+        if hit == CEIL or hit == FLOOR:
+            handle_bw( b , b.bola , hit )
             return
 
-        if hit1: 
-            handle_bw( b.bola , hit1 , rpad.barra , lpad.barra )
+        # acertou as paredes verticais, o que significa ponto
+        pad_win  = rpad.barra
+        pad_lose = lpad.barra
+        if hit == BACK_WALL:
+            pad_win , pad_lose = pad_lose , pad_win
+        bola = b.bola
+
+        update_score( pad_win , pad_lose , bola )
+    
+    def manage_ball_pad( ):
+
+        hit1 = check_bp( b , rpad )
+        hit2 = check_bp( b , lpad )
+
+        if not( hit1 or hit2 ):
             return
 
-        pad = rpad if hit2 else lpad
-        handle_bp( b , pad, hit2 )
+        pad = rpad if hit1 else lpad
+        handle_bp( b , pad )
     
     while True:
 
@@ -97,18 +142,14 @@ def main():
         set_screen()
 
         # dt = .1        
-        b.convert_pos()
-        rpad.convert_pos()
-        lpad.convert_pos()
-        manage_ball_hits()
-        manage_pad_pos()
         manage_keys()
+        if paused:
+            continue
 
-        dt = W.delta_time()
-        b.bola.move( dt )
-        rpad.barra.move( dt )
-        lpad.barra.move( dt )
-
+        manage_ball_wall()
+        manage_ball_pad()
+        manage_pad_pos()
+        move_sprites()
 
 if __name__ == "__main__":
     main()
