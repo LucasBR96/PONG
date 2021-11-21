@@ -51,12 +51,17 @@ class barra:
         #------------------------------------------------------------
         # Se for nescessário retornar à posição original. Por exemplo
         # em caso de colisão
-        self.previous_pos  = self.pos.copy()
-        self.previous_norm = self.norm.copy()
+        x , y  = self.pos
+        self.previous_pos  = ( x , y )
+
+        nx , ny = self.norm
+        self.previous_norm = ( nx , ny ) 
 
         #-------------------------------------------------------------
         # Area em que o pad fica restrito
         self.outerbox = kwargs.get("outerbox" , RIGHT_BOX )
+
+        self.score = 0
 
     def get_edges( self ):
 
@@ -70,15 +75,19 @@ class barra:
         
     def reset_vars( self , point = False ):
 
+        
         p0 = self.basepos if point else self.previous_pos
-        self.pos = p0.copy()
+        self.pos = numpy.array( p0 )
 
         n0 = self.basenorm if point else self.previous_norm
-        self.norm = n0.copy()
+        self.norm = numpy.array( n0 )
 
     def move( self , dt ):
 
-        self.previous_pos = self.pos.copy()
+        if ( self.speed**2 ).sum() == 0.: return 
+
+        x , y = self.pos
+        self.previous_pos = ( x , y )
         self.pos += self.speed*dt
     
     def out_of_thebox( self ):

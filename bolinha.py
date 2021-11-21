@@ -7,26 +7,8 @@ from PPlay.sprite import *
 from PPlay.window import *
 
 # utilidades
-from utils import coord_conv
+from utils import coord_conv, set_bolinha_vel
 from constantes import *
-
-
-def coord_convert( cart , screen_dim, R = 25 ):
-
-    '''
-    converte as coordenadas do sistema cartesiano ( Centro da tela = ( 0 , 0 ) )
-    para o sistema do PPlay
-    '''
-
-    # R é a razão entre numero de pixels e um metro
-    
-    dx = int( R*cart[ 0 ] )
-    sx = screen_dim[ 0 ]//2 + dx
-
-    dy = int( R*cart[ 1 ] )
-    sy = screen_dim[ 1 ]//2 - dy
-    
-    return sx , sy
 
 class bolinha:
 
@@ -34,21 +16,25 @@ class bolinha:
 
         self.mass  = kwargs.get( "mass" , BOLA_MASS )
         self.pos   = kwargs.get( "pos" , BOLA_START )
-        self.speed = kwargs.get( "speed" , BOLA_VEL )
+        self.speed = kwargs.get( "speed" , set_bolinha_vel() )
 
-        self.base_pos     = self.pos.copy()
+        self.base_pos     = ( BOLA_START[ 0 ] , BOLA_START[ 1 ] )
         self.previous_pos = self.pos.copy()
     
     def move( self , dt , g = G ):
 
-        self.previous_pos = self.pos.copy()
+        x , y = self.pos
+        self.previous_pos = ( x , y )
+
         self.pos += self.speed*dt
         self.speed[ 1 ] -= g*dt
 
-    def reset_pos( self , ponto = False ):
+    def reset_pos( self , point = False ):
 
-        old = self.base_pos if ponto else self.previous_pos
-        self.pos = old
+        old = self.base_pos if point else self.previous_pos
+        self.pos = numpy.array( old )
+
+        if point: self.speed = set_bolinha_vel()
 
 class bolinha_spr( Sprite ):
 

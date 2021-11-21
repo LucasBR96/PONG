@@ -6,6 +6,7 @@
 
 #folders
 PPlay/
+__pycache__/
 
 #metadados
 *.pyc

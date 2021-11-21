@@ -29,7 +29,7 @@ def main():
     lpad = barra_spr( )
     lpad.barra = barra.left()
     lpad.convert_pos()
-    print( *lpad.barra.pos , lpad.x , lpad.y )
+    # print( *lpad.barra.pos , lpad.x , lpad.y )
 
 
     kb = Keyboard()
@@ -44,13 +44,13 @@ def main():
 
     def manage_keys():
         
-        v = numpy.zeros( 2 )
-
         a = any( map( foo , RPAD_KEYS ) )
         b = any( map( foo , LPAD_KEYS ) )
         c = foo( PAUSE )
 
         if not ( a or b or c ):
+            rpad.barra.speed = numpy.zeros( 2 )
+            lpad.barra.speed = numpy.zeros( 2 )
             return
         
         up , down , left , right = RPAD_KEYS
@@ -70,10 +70,13 @@ def main():
         for pad in [ rpad , lpad ]:
             barra = pad.barra
             if barra.out_of_thebox():
+                barra.out_of_thebox()
+                print( barra.pos , pad.x , pad.y , pad.x + pad.width , pad.y + pad.height )
                 barra.reset_vars()
 
     def manage_ball_hits():
 
+        # print( *b.bola.pos , *b.bola.speed )
         hit1 = check_bw( b , ( W.width , W.height ) )
         hit2 = check_bp( b , rpad )
         hit3 = check_bp( b , lpad )
@@ -82,28 +85,30 @@ def main():
             return
 
         if hit1: 
-            handle_bw( b.bola , hit1 )
+            handle_bw( b.bola , hit1 , rpad.barra , lpad.barra )
             return
 
         pad = rpad if hit2 else lpad
-        handle_bp( b.bola , pad.barra , hit2 )
+        handle_bp( b , pad, hit2 )
     
     while True:
 
         W.update()
         set_screen()
 
-        dt = W.delta_time()
         # dt = .1        
-        b.bola.move( dt )
         b.convert_pos()
-        rpad.barra.move( dt )
         rpad.convert_pos()
         lpad.convert_pos()
-
         manage_ball_hits()
         manage_pad_pos()
         manage_keys()
+
+        dt = W.delta_time()
+        b.bola.move( dt )
+        rpad.barra.move( dt )
+        lpad.barra.move( dt )
+
 
 if __name__ == "__main__":
     main()

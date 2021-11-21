@@ -27,11 +27,22 @@ class coord_conv:
         '''
         pass
 
-
 class clock:
 
     def __init__( self ):
         pass
+
+def set_bolinha_vel( ):
+
+    theta = BOLA_THETA*( numpy.random.random() -.5 )
+    vec   = BOLA_VEL*numpy.array([
+        numpy.cos( theta ), 
+        numpy.sin( theta )
+    ])
+
+    if numpy.random.random() > .5:
+        vec *= -1
+    return vec
 
 def check_bw( bola_sprite , screen = SCREEN_DIM ):
 
@@ -57,21 +68,28 @@ def check_bw( bola_sprite , screen = SCREEN_DIM ):
     
     return NO_WALL
 
-def handle_bw( bola , col_type , k = K ):
+def handle_bw( bola , col_type , rpad , lpad , k = K ):
 
     '''
-    Muda a direção da bola de acordo com a colisão obtida. 
+    Muda a direção da bola de acordo com a colisão obtida com uma das paredes.
     '''
 
     if col_type == NO_WALL:
         return
     
-    dv = k*numpy.array( [ -1 , 1 ] )
     if col_type == FLOOR or col_type == CEIL:
-        dv *= -1
+        dv = k*numpy.array( [ 1 , -1 ] )
+        bola.speed *= dv 
+        bola.reset_pos()
+        return
+
     
-    bola.speed *= dv 
-    bola.reset_pos()
+    pad = rpad if col_type == FRONT_WALL else lpad
+    pad.score += 1 
+    rpad.reset_vars( point = True)
+    lpad.reset_vars( point = True)
+    bola.reset_pos( point = True )
+
 
 def check_bp( bola_sprite , pad_sprite ):
 
@@ -84,10 +102,14 @@ def check_bp( bola_sprite , pad_sprite ):
         return FRONT_PAD
     return BACK_PAD
 
-def handle_bp( bola , barra ,col_type , k = K ):
+def handle_bp( bola_sprite, barra , k = K ):
 
-    dv = numpy.array( [ -1 , 1 ] )
-    bola.speed *= dv
-    bola.reset_pos()
-    barra.reset_vars()
+    bola_sprite.bola.speed *= -1
     
+    t = .001
+    while bola_sprite.collided( barra ):
+        bola_sprite.bola.move( t )
+        bola_sprite.convert_pos()
+    
+    dv = numpy.array( [ -1 , 1 ] )
+    bola_sprite.bola.speed *= -dv
