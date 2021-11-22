@@ -9,7 +9,7 @@ from constantes import *
 class coord_conv:
 
     def __init__(
-        self , center = numpy.array( ( 0 , SCREEN_DIM[ 1 ] ) ),
+        self , center = numpy.array( ( 0 , SCREEN_H ) ),
         mat = numpy.array([ [ R , 0 ] , [ 0 , -R ] ])
     ):
 
@@ -73,7 +73,7 @@ def handle_bw( bola_sprite , bola , col_type ):
     if col_type == CEIL:
         bola_sprite.y = 0
     else:
-        bola_sprite.y = SCREEN_DIM[ 1 ] - bola_sprite.height
+        bola_sprite.y = SCREEN_H - bola_sprite.height
     
     bola.speed[ 1 ] *= -1
     bola_sprite.set_virt_pos()
