@@ -36,26 +36,5 @@ class bolinha:
 
         if point: self.speed = set_bolinha_vel()
 
-class bolinha_spr( Sprite ):
-
-    def __init__( self , **kwargs ):
-        
-        image_file = kwargs.get( 'image_file' , BOLA_IMG)
-        super().__init__( "assets/images/" + image_file )
-
-        self.bola = bolinha( **kwargs )
-        self.conv = coord_conv( **kwargs )
-    
-    def convert_pos( self ):
-
-        x , y = self.bola.pos
-        true_x , true_y = self.conv.from_virtual( x , y )
-        self.set_position( true_x , true_y )
-    
-    def set_virt_pos( self ):
-
-        x , y = self.x , self.y
-        virtual_x , virtual_y = self.conv.to_virtual( x , y )
-        self.bola.pos = numpy.array( [ virtual_x , virtual_y ] )
         
 
