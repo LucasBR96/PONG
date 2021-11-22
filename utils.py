@@ -101,11 +101,19 @@ def check_bp( bola_sprite , pad_sprite ):
 
 def handle_bp( bola_sprite, barra , k = K ):
 
-    bola_sprite.bola.speed *= -1
+    # bola_sprite.bola.speed *= -1
     
-    t = .001
-    while bola_sprite.collided( barra ):
-        bola_sprite.bola.move( t )
-        bola_sprite.convert_pos()
+    # t = .001
+    # while bola_sprite.collided( barra ):
+    #     bola_sprite.bola.move( t )
+    #     bola_sprite.convert_pos()
     
-    bola_sprite.bola.speed[1] *= -1
+    # bola_sprite.bola.speed[1] *= -1
+
+    new_x = barra.x - bola_sprite.width
+    if bola_sprite.x > barra.x:
+        new_x = barra.x + barra.width
+    
+    bola_sprite.x = new_x
+    bola_sprite.set_virt_pos()
+    bola_sprite.bola.speed[0] *= -1

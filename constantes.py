@@ -20,7 +20,7 @@ PLACAR2_X = 7*SCREEN_DIM[ 0 ]/8
 # Pausa
 PAUSE_X = ( SCREEN_DIM[0]/2 ) - 3*FONT_SIZE
 PAUSE_Y = ( SCREEN_DIM[1]/2 ) - .5*FONT_SIZE
-PAUSE_T = .05
+PAUSE_T = .1
 
 # Pad
 PAD_TAM    = 1.5
