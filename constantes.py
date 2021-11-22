@@ -1,25 +1,30 @@
 import numpy
 
 # Dimensões virtuais e reais
-QUADRA_DIM = ( 13 , 6 )
-SCREEN_DIM = ( 1040 , 480 )
-R = SCREEN_DIM[ 0 ]/QUADRA_DIM[ 0 ]
+R = 80
+QUADRA_W = 13
+QUADRA_H = 6
+SCREEN_W = QUADRA_W*R
+SCREEN_H = QUADRA_H*R
+# QUADRA_DIM = ( 13 , 6 )
+# SCREEN_DIM = ( 1040 , 480 )
+# R = SCREEN_W/QUADRA_W
 
 # Bola
 BOLA_VEL   = 5.
 BOLA_THETA = numpy.pi/3
-BOLA_START = numpy.array( [ 6. , 3. ] )
+BOLA_START = numpy.array( [ QUADRA_W , QUADRA_H ] )/2
 BOLA_MASS  = .3
 
 # Placares
 FONT_SIZE = 28
-PLACAR_Y  = SCREEN_DIM[ 1 ]/2
-PLACAR1_X = SCREEN_DIM[ 0 ]/8
-PLACAR2_X = 7*SCREEN_DIM[ 0 ]/8
+PLACAR_Y  = SCREEN_H/2
+PLACAR1_X = SCREEN_W/8
+PLACAR2_X = 7*SCREEN_W/8
 
 # Pausa
-PAUSE_X = ( SCREEN_DIM[0]/2 ) - 3*FONT_SIZE
-PAUSE_Y = ( SCREEN_DIM[1]/2 ) - .5*FONT_SIZE
+PAUSE_X = ( SCREEN_W/2 ) - 3*FONT_SIZE
+PAUSE_Y = ( SCREEN_H/2 ) - .5*FONT_SIZE
 PAUSE_T = .1
 
 # Pad
@@ -28,11 +33,11 @@ PAD_SPEED  = 4.
 ROT_SPEED  = 1.
 MAX_THETA  = numpy.pi/3
 RIGHT_NORM = numpy.array( [1. , 0 ] )
-RIGHT_PAD  = numpy.array( [ QUADRA_DIM[0]/4 , QUADRA_DIM[1]/2 ] )
-RIGHT_BOX  = [ 0 , 0 , QUADRA_DIM[0]/3 , QUADRA_DIM[1] ]
+RIGHT_PAD  = numpy.array( [ QUADRA_W/4 , QUADRA_H/2 ] )
+RIGHT_BOX  = [ 0 , 0 , QUADRA_W/3 , QUADRA_H ]
 LEFT_NORM  = numpy.array( [-1. , 0 ] )
-LEFT_PAD   = numpy.array( [ 3*QUADRA_DIM[0]/4 , QUADRA_DIM[1]/2 ] )
-LEFT_BOX   = [ 2*QUADRA_DIM[0]/3 , 0 , QUADRA_DIM[0]/3 , QUADRA_DIM[1] ]
+LEFT_PAD   = numpy.array( [ 3*QUADRA_W/4 , QUADRA_H/2 ] )
+LEFT_BOX   = [ 2*QUADRA_W/3 , 0 , QUADRA_W/3 , QUADRA_H ]
 
 # Física
 G = 2.81   # Acc da Gravidade
@@ -53,9 +58,10 @@ BACK_WALL  = 3
 FLOOR      = 4
 
 #Colisoes com o Pad
-FRONT_PAD = 1
-BACK_PAD  = -1
 NO_PAD    = 0
+SIDE_PAD  = 1
+OVR_PAD   = 2 # Tanto em cima como abaixo
+
 
 #Teclado
 RPAD_KEYS = ['w' , 's' , 'a' , 'd' ]
