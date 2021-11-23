@@ -25,8 +25,28 @@ class coord_conv:
         
 class clock:
 
-    def __init__( self ):
-        pass
+    def __init__( self , num_ticks = TICKS ):
+        
+        self.last_t    = time.time()
+        self.max_ticks = num_ticks
+        self.curr_tick = 0
+        self.tps       = None
+    
+    def tick( self ):
+
+        self.curr_tick += 1
+        if self.curr_tick < self.max_ticks:
+            return False
+        
+        self.curr_tick = 0
+
+        aux = self.last_t
+        self.last_t = time.time()
+        dt = self.last_t - aux
+
+        tps = dt/self.max_ticks #ticks per second
+        self.tps = "{:2f}".format( tps )
+        return True
 
 def set_bolinha_vel( ):
 
@@ -37,10 +57,10 @@ def set_bolinha_vel( ):
     ])
 
     if numpy.random.random() > .5:
-        vec *= -1
+        vec[ 0 ] *= -1
     return vec
 
-def check_bw( bola_sprite , screen = SCREEN_DIM ):
+def check_bw( bola_sprite ):
 
     '''
     Checa se a bola colidiu com alguma parede, retornando
@@ -48,15 +68,14 @@ def check_bw( bola_sprite , screen = SCREEN_DIM ):
     denada do PPlay.
     '''
 
-    width , height = screen
 
-    if bola_sprite.y + bola_sprite.height > height:
+    if bola_sprite.y + bola_sprite.height > SCREEN_H:
         return FLOOR
     
     if bola_sprite.y < 0:
         return CEIL
     
-    if bola_sprite.x + bola_sprite.width > width:
+    if bola_sprite.x + bola_sprite.width > SCREEN_W:
         return FRONT_WALL
     
     if bola_sprite.x < 0:
@@ -93,27 +112,23 @@ def check_bp( bola_sprite , pad_sprite ):
     if not bola_sprite.collided( pad_sprite ):
         return NO_PAD
     
-    vbola = bola_sprite.bola.speed
-    vpad  = pad_sprite.barra.norm
-    if vbola.dot( vpad ) < 0:
-        return FRONT_PAD
-    return BACK_PAD
+    x_center = pad_sprite.x + pad_sprite.width/2
+    a = ( bola_sprite.x < x_center < bola_sprite.x + bola_sprite.width )
+    b = bola_sprite.y < pad_sprite.y
+    c = bola_sprite.y + bola_sprite.height > pad_sprite.y + pad_sprite.height
 
-def handle_bp( bola_sprite, barra , k = K ):
+    if a and ( b or c ):
+        return OVR_PAD
+    return SIDE_PAD
 
-    # bola_sprite.bola.speed *= -1
-    
-    # t = .001
-    # while bola_sprite.collided( barra ):
-    #     bola_sprite.bola.move( t )
-    #     bola_sprite.convert_pos()
-    
-    # bola_sprite.bola.speed[1] *= -1
 
-    new_x = barra.x - bola_sprite.width
-    if bola_sprite.x > barra.x:
-        new_x = barra.x + barra.width
-    
-    bola_sprite.x = new_x
-    bola_sprite.set_virt_pos()
-    bola_sprite.bola.speed[0] *= -1
+def handle_bp( bola_sprite, barra_sprite, col_type ):
+
+    a = ( col_type == SIDE_PAD )
+    b = ( bola_sprite.x < barra_sprite.x)
+    c = ( bola_sprite.y < barra_sprite.y )
+
+    if   a and b: bola_sprite.x = barra_sprite.x - bola_sprite.width #  pela esquerda
+    elif a: bola_sprite.x = barra_sprite.x + barra_sprite.width      #  pela direita
+    elif c: bola_sprite.y = barra_sprite.y - bola_sprite.height      #  por cima
+    else  : bola_sprite.y = barra_sprite.y + barra_sprite.height     #  por baixo

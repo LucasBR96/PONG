@@ -25,7 +25,11 @@ PLACAR2_X = 7*SCREEN_W/8
 # Pausa
 PAUSE_X = ( SCREEN_W/2 ) - 3*FONT_SIZE
 PAUSE_Y = ( SCREEN_H/2 ) - .5*FONT_SIZE
+
+# Tempos Padrão
 PAUSE_T = .1
+BACK_DT = .01
+TICKS   = 100
 
 # Pad
 PAD_TAM    = 1.5
@@ -43,9 +47,6 @@ K = 1.     # Coef de restituição
 # Imagens
 BOLA_IMG = 'basquete.png'
 PAD_IMG  = 'Pad.png'
-
-# descolisao
-BACK_DT = .1
 
 # colisoes com paredes
 NO_WALL    = 0
