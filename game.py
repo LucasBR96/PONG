@@ -145,6 +145,7 @@ def manage_ball_wall():
     
     if hit == CEIL or hit == FLOOR:
         handle_bw( bola_sprite )
+        align_ball( True )
         bola.speed[ 1 ] *= -1
         return
 
@@ -155,18 +156,27 @@ def manage_ball_wall():
         pad_win , pad_lose = pad_lose , pad_win
     update_score( pad_win , pad_lose , bola )
 
+def manage_ball_pad( ):
+
+    hit1 = check_bp( bola_sprite , padr_sprite )
+    hit2 = check_bp( bola_sprite , padl_sprite )
+
+    if not( hit1 or hit2 ):
+        return
+
+    pad = padr_sprite if hit1 else padl_sprite
+    handle_bp( bola_sprite , pad )
+    align_ball( True )
+
+    v = numpy.array( [ -1 , 1 ] )
+    hit = max( hit1 , hit2 )
+    if hit == OVR_PAD:
+        v *= -1
+    bola.speed *= v
+
+
 def main():
 
-    def manage_ball_pad( ):
-
-        hit1 = check_bp( b , rpad )
-        hit2 = check_bp( b , lpad )
-
-        if not( hit1 or hit2 ):
-            return
-
-        pad = rpad if hit1 else lpad
-        handle_bp( b , pad )
     
     while True:
 
