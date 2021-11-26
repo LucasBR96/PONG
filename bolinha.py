@@ -35,6 +35,7 @@ class bolinha:
         self.pos = numpy.array( old )
 
         if point: self.speed = set_bolinha_vel()
+    
 
         
 

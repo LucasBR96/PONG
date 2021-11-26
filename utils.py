@@ -83,7 +83,7 @@ def check_bw( bola_sprite ):
     
     return NO_WALL
 
-def handle_bw( bola_sprite , bola , col_type ):
+def handle_bw( bola_sprite , col_type ):
 
     '''
     Muda a direção da bola de acordo com a colisão obtida com o teto ou chão
@@ -94,11 +94,6 @@ def handle_bw( bola_sprite , bola , col_type ):
     else:
         bola_sprite.y = SCREEN_H - bola_sprite.height
     
-    bola.speed[ 1 ] *= -1
-    bola_sprite.set_virt_pos()
-    
-
-
 def update_score( pad_win , pad_lose , bola ):
 
     pad_win.score += 1 
@@ -113,6 +108,10 @@ def check_bp( bola_sprite , pad_sprite ):
         return NO_PAD
     
     x_center = pad_sprite.x + pad_sprite.width/2
+
+    #-----------------------------------------------------------------
+    # definindo se a bola foi pelas pontas da barra ( i.e por cima ou por baixo )
+    # as 3 condições são
     a = ( bola_sprite.x < x_center < bola_sprite.x + bola_sprite.width )
     b = bola_sprite.y < pad_sprite.y
     c = bola_sprite.y + bola_sprite.height > pad_sprite.y + pad_sprite.height
@@ -124,6 +123,9 @@ def check_bp( bola_sprite , pad_sprite ):
 
 def handle_bp( bola_sprite, barra_sprite, col_type ):
 
+    '''
+    feita nas coordenadas do PPlay.
+    '''
     a = ( col_type == SIDE_PAD )
     b = ( bola_sprite.x < barra_sprite.x)
     c = ( bola_sprite.y < barra_sprite.y )
