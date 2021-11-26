@@ -102,8 +102,8 @@ def manage_keys():
     
     v = numpy.zeros( 2 )
     if not ( a or b ):
-        padr.barra.speed = v.copy()
-        padr.barra.speed = v.copy()
+        padl.speed = v.copy()
+        padr.speed = v.copy()
         return
     
     up , down , left , right = RPAD_KEYS
@@ -116,7 +116,7 @@ def manage_keys():
     elif foo( down  ): v = numpy.array( [ 0 , -PAD_SPEED ] )
     elif foo( left  ): v = numpy.array( [ -PAD_SPEED, 0  ] )
     elif foo( right ): v = numpy.array( [ PAD_SPEED , 0 ] )
-    pad.barra.speed = v
+    pad.speed = v
 
 def move_sprites():
 
@@ -135,7 +135,6 @@ def move_sprites():
     align_pad()
     align_pad( True )
 
-
 def manage_ball_wall():
 
     global bola_sprite , bola
@@ -144,7 +143,7 @@ def manage_ball_wall():
         return
     
     if hit == CEIL or hit == FLOOR:
-        handle_bw( bola_sprite )
+        handle_bw( bola_sprite , hit )
         align_ball( True )
         bola.speed[ 1 ] *= -1
         return
@@ -156,7 +155,7 @@ def manage_ball_wall():
         pad_win , pad_lose = pad_lose , pad_win
     update_score( pad_win , pad_lose , bola )
 
-def manage_ball_pad( ):
+def manage_ball_pad():
 
     hit1 = check_bp( bola_sprite , padr_sprite )
     hit2 = check_bp( bola_sprite , padl_sprite )
@@ -165,33 +164,27 @@ def manage_ball_pad( ):
         return
 
     pad = padr_sprite if hit1 else padl_sprite
-    handle_bp( bola_sprite , pad )
+    hit = max( hit1 , hit2 )
+    handle_bp( bola_sprite , pad, hit )
     align_ball( True )
 
     v = numpy.array( [ -1 , 1 ] )
-    hit = max( hit1 , hit2 )
     if hit == OVR_PAD:
         v *= -1
     bola.speed *= v
 
-
 def main():
 
+    init_globals()
     
     while True:
 
         W.update()
-        set_screen()
-
-        # dt = .1        
         manage_keys()
-        if paused:
-            continue
-
+        set_screen()
+        move_sprites()
         manage_ball_wall()
         manage_ball_pad()
-        manage_pad_pos()
-        move_sprites()
 
 if __name__ == "__main__":
     main()

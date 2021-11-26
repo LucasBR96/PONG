@@ -45,8 +45,8 @@ G = 9.81   # Acc da Gravidade
 K = 1.     # Coef de restituição
 
 # Imagens
-BOLA_IMG = 'basquete.png'
-PAD_IMG  = 'Pad.png'
+BOLA_IMG = 'assets/images/basquete.png'
+PAD_IMG  = 'assets/images/Pad.png'
 
 # colisoes com paredes
 NO_WALL    = 0
