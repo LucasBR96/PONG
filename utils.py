@@ -134,3 +134,31 @@ def handle_bp( bola_sprite, barra_sprite, col_type ):
     elif a: bola_sprite.x = barra_sprite.x + barra_sprite.width      #  pela direita
     elif c: bola_sprite.y = barra_sprite.y - bola_sprite.height      #  por cima
     else  : bola_sprite.y = barra_sprite.y + barra_sprite.height     #  por baixo
+
+#---------------------------------------------------------------------------------
+# colisao semi-realista
+
+def recalculate_speed( bola , pad , col_type , k = K ):
+
+    idx = 0
+    if col_type == OVR_PAD:
+        idx = 1
+    
+    # pad parado, padrão da função
+    ratio = k
+
+    # ----------------------------------------------
+    # pad se movendo na direção da bola, assim a bola
+    # volta com mais força
+    if bola.speed[ idx ]*pad.speed[ idx ] < 0:
+        ratio = 2 - k
+    
+    # -----------------------------------------------
+    # pad se afastando da bola, assim ela volta mais fraca
+    elif bola.speed[ idx ]*pad.speed[ idx ] == 0:
+        ratio = 3*k/4
+
+    if bola.speed[ idx ] > 0:
+        ratio *= -1
+    
+    bola.speed[ idx ] += ratio 
